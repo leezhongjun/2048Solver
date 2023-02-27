@@ -6,7 +6,7 @@ Like minimax but instead of minimising, calculate sum (probability * evaluation 
 
 Default depth: 2 if freespaces in grid < 5 else 3
 
-Score: averages around 1024-2048
+Score: averages >2048
 
 ### How to use:
 1. Open folder in terminal/cmd prompt
