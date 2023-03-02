@@ -3,182 +3,137 @@
 <html>
 <head>
 <style>
- table, th, td {
-	table-layout: fixed;
-	border: 1px solid black;
-	text-align: center;
-	width:120px;
-	height:120px;
-	font-size:35px;
-	font-family: "Lucida Console";
-	overflow: hidden;
-	
- }
+    html {
+        color: #776e65;
+        font-family: helvetica,Arial,sans-serif;
+        background-color: #faf8ef;
+    }
+    
+    table, th, td {
+        table-layout: fixed;
+        background-color: #cdc1b4;
+        border: 7px solid #bbada0;
+        border-spacing: 0;
+        border-color: #bbada0;
+        width:120px;
+        height:120px;
+        text-align: center;
+        font-family: helvetica,Arial,sans-serif;
+        font-weight: bold;
+        font-size:40px;
+        overflow: hidden;
+        
+    }
+
+    table {
+        border-radius: 5px;
+    }
+    
+    button, input[type=submit] {
+        font-family: helvetica,Arial,sans-serif;
+        background-color: #8f7a66;
+        color: #f5efe5;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+    }
 </style>
+<title>2048</title>
+<link rel="icon" href="https://2048game.com/favicon.ico">
 </head>
-<h1>Move by WASD or arrow keys<br>
-Press R to restart<br>
-Press B to bot<br>
-Score: {{score}}<br></h1>
+<h1>
+    Move by WASD or arrow keys<br>
+    Press R to restart<br>
+    Press B to bot<br>
+    Score: {{score}}<br>
+    Moves: {{moves}}
+</h1>
 
 {% if debug %}
-<h1>mono: {{mono}}<br>free: {{free}}<br>total: {{total}}</h1>
+    <h1>
+        mono: {{mono}}<br>
+        free: {{free}}<br>
+        total: {{total}}
+    </h1>
 {% endif %}
-{%if not state%}
-<h1>You lose!<h1>
+
+{%if not state %}
+    <h1>You lose!</h1>
+{% endif %}
 
 <table id='tableID'>
-{% for row in grid %}
-<tr ><td>{{row[0]}}</td><td>{{row[1]}}</td><td>{{row[2]}}</td><td>{{row[3]}}</td></tr>
-{% endfor %}
+    {% for row in grid %}
+        <tr ><td>{{row[0]}}</td><td>{{row[1]}}</td><td>{{row[2]}}</td><td>{{row[3]}}</td></tr>
+    {% endfor %}
 </table>
+<br>
 
-<form action={{url_for('main')}} method="post">
-<input type='submit', value='Restart game' style='font-size:30px'>
-</form>
-<script>
-var table = document.getElementById('tableID');
-var tbody = table.getElementsByTagName('tbody')[0];
-var cells = tbody.getElementsByTagName('td');
-
-for (var i=0, len=cells.length; i<len; i++){
-    if (parseInt(cells[i].innerHTML,10) ==2){
-        cells[i].style.backgroundColor = "#eee4da";
-    }
-    else if (parseInt(cells[i].innerHTML,10) ==4){
-        cells[i].style.backgroundColor = "#ede0c8";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==8){
-		cells[i].style.color = '#f9f6f2'
-        cells[i].style.backgroundColor = "#f2b179";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==16){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#f59563";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==32){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#f67c5f";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==64){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#f65e3b";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==128){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#edcf72";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==256){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#edc850";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==512){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#edc53f";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==1024){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#edc22e";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==2048){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#3c3a32";
-    }
-}
-</script>
-{%else%}
-
-
-<table id='tableID'>
-{% for row in grid %}
-<tr><td>{{row[0]}}</td><td>{{row[1]}}</td><td>{{row[2]}}</td><td>{{row[3]}}</td></tr>
-{% endfor %}
-</table>
-<form id='87' action={{url_for('gameup')}} method="post" type='hidden'>
-</form>
-<form id='38' action={{url_for('gameup')}} method="post" type='hidden'>
-</form>
-<form id='83' action={{url_for('gamedown')}} method="post" type='hidden'>
-</form>
-<form id='40' action={{url_for('gamedown')}} method="post" type='hidden'>
-</form>
-<form id='65' action={{url_for('gameleft')}} method="post" type='hidden'>
-</form>
-<form id='37' action={{url_for('gameleft')}} method="post" type='hidden'>
-</form>
-<form id='68' action={{url_for('gameright')}} method="post" type='hidden'>
-</form>
-<form id='39' action={{url_for('gameright')}} method="post" type='hidden'>
-</form>
-
-<form id='66' action={{url_for('bot')}} method="post" type='hidden'>
-</form>
 <form id ='82' action={{url_for('main')}} method="post">
-<input type='submit', value='Restart game' style='font-size:30px'>
+    <input type='submit', value='Restart game' style='font-size:30px'>
 </form>
+<br>
 
-<button onclick="botMe()" style='font-size:25px'>Bot the game</button>
+<script>
+    window.addEventListener("keyup", function(e) {
+            document.getElementById(e.keyCode.toString()).submit();
+    })
 
+    var table = document.getElementById('tableID');
+    var tbody = table.getElementsByTagName('tbody')[0];
+    var cells = tbody.getElementsByTagName('td');
+    var CELL_COLORS = { 2:"#776e65", 4:"#776e65", 8:"#f9f6f2", 16:"#f9f6f2", 
+                    32:"#f9f6f2", 64:"#f9f6f2", 128:"#f9f6f2", 256:"#f9f6f2", 
+                    512:"#f9f6f2", 1024:"#f9f6f2", 2048:"#f9f6f2" }
+    var CELL_BG_COLORS = { 2:"#eee4da", 4:"#ede0c8", 8:"#f2b179", 16:"#f59563", 
+                    32:"#f67c5f", 64:"#f65e3b", 128:"#edcf72", 256:"#edc850", 
+                    512:"#edc53f", 1024:"#edc22e", 2048:"#ecc43f" }
 
-<script type="text/javascript">
-  window.addEventListener("keyup", function(e) {
-	document.getElementById(e.keyCode.toString()).submit();
-  })
-  function botMe(){
-  document.getElementById('66').submit();
-  }
-	if (window.location.pathname == '/bot'){for (let i = 0; i < 1000; i++) {
-		document.getElementById('66').submit();
-	};}
-	
-var table = document.getElementById('tableID');
-var tbody = table.getElementsByTagName('tbody')[0];
-var cells = tbody.getElementsByTagName('td');
-
-for (var i=0, len=cells.length; i<len; i++){
-    if (parseInt(cells[i].innerHTML,10) ==2){
-        cells[i].style.backgroundColor = "#eee4da";
+    for (var i=0, len=cells.length; i<len; i++){
+        cells[i].style.color = CELL_COLORS[cells[i].innerHTML]
+        cells[i].style.backgroundColor = CELL_BG_COLORS[cells[i].innerHTML]
+        if (parseInt(cells[i].innerHTML,10) >2048){
+                cells[i].style.color = "#f9f6f2";
+                cells[i].style.backgroundColor = "#3c3a32";
+        }
     }
-    else if (parseInt(cells[i].innerHTML,10) ==4){
-        cells[i].style.backgroundColor = "#ede0c8";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==8){
-		cells[i].style.color = '#f9f6f2'
-        cells[i].style.backgroundColor = "#f2b179";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==16){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#f59563";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==32){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#f67c5f";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==64){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#f65e3b";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==128){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#edcf72";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==256){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#edc850";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==512){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#edc53f";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==1024){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#edc22e";
-    }
-else if (parseInt(cells[i].innerHTML,10) ==2048){
-        cells[i].style.color = "#f9f6f2";
-		cells[i].style.backgroundColor = "#3c3a32";
-    }
-}
 </script>
+
+{% if state %}
+    <form id='87' action={{url_for('gameup')}} method="post" type='hidden'>
+    </form>
+    <form id='38' action={{url_for('gameup')}} method="post" type='hidden'>
+    </form>
+    <form id='83' action={{url_for('gamedown')}} method="post" type='hidden'>
+    </form>
+    <form id='40' action={{url_for('gamedown')}} method="post" type='hidden'>
+    </form>
+    <form id='65' action={{url_for('gameleft')}} method="post" type='hidden'>
+    </form>
+    <form id='37' action={{url_for('gameleft')}} method="post" type='hidden'>
+    </form>
+    <form id='68' action={{url_for('gameright')}} method="post" type='hidden'>
+    </form>
+    <form id='39' action={{url_for('gameright')}} method="post" type='hidden'>
+    </form>
+
+    <form id='66' action={{url_for('bot')}} method="post" type='hidden'>
+    </form>
+
+    <button onclick="botMe()" style='font-size:25px'>Bot the game</button>
+
+
+    <script>
+
+        function botMe(){
+            document.getElementById('66').submit();
+        }
+
+        // Keep botting if on bot page
+        if (window.location.pathname == '/bot'){
+            for (let i = 0; i < 1000; i++) {
+                document.getElementById('66').submit();
+            };
+        }
+    </script>
 {%endif%}
 </html>

@@ -1,21 +1,24 @@
-from flask import Flask, render_template, request
-import sys
+
 from random import randint, choice
-from pynput import keyboard
-import numpy as np
-import math
 from copy import deepcopy
+from typing import List, Tuple
+
 DEBUG = False
 COMP_SOLVE = True
 grid = []
 
-def get_val():
+### HELPER FUNCTIONS ###
+def get_val() -> int:
+	'''get a random value for a cell'''
+
 	if randint(0,9) > 0:
 		return 2
 	else:
 		return 4
 		
-def make_grid():
+def make_grid() -> List[List[int]]:
+	'''make a 4x4 grid'''
+
 	grid = [[0 for y in range(4)] for x in range(4)]
 	x = randint(0,3)
 	y = randint(0,3)
@@ -27,8 +30,9 @@ def make_grid():
 	grid[x][y] = get_val()
 	return grid
 	
-#spawn block
-def find_empty(grid):
+def find_empty(grid) -> List[Tuple[int, int]]:
+	'''find empty cells in grid'''
+
 	empty_list = []
 	for i in range(4):
 		for j in range(4):
@@ -36,32 +40,44 @@ def find_empty(grid):
 				empty_list.append((i,j))
 	return empty_list
 
-def get_curr_score(grid):
+def get_curr_score(grid) -> int:
+	'''get current score'''
+
 	max_score = 0
 	for row in grid:
 		for el in row:
 			max_score = max(max_score, el)
 	return max_score
 
-def check_game_state(grid, empty_list): #returns not lose?, score
-	if empty_list == []:
-		return False, get_curr_score(grid)
-	else:
-		return True, get_curr_score(grid)
+def check_game_state(grid) -> Tuple[bool, int]:
+	'''check if game is over and return current score'''
+
+	ngrid = deepcopy(grid)
+	grids = [left(ngrid), right(ngrid), up(ngrid), down(ngrid)]
+	for g in grids:
+		if g != ngrid:
+			return True, get_curr_score(ngrid)
+	return False, get_curr_score(ngrid)
 	
-def spawn(grid, empty_list):
+def spawn(grid, empty_list) -> List[List[int]]:
+	'''spawn a new cell in an empty cell'''
+
 	x, y = choice(empty_list)
 	grid = [list(x) for x in grid]
 	grid[x][y] = get_val()
 	return grid
 	
-def flatten(new_row):
+def flatten(new_row) -> List[int]:
+	'''flatten a row (after a move)'''
+
 	for _ in range(3):
 		for j in range(1,4):
 			if new_row[j-1] == 0:
 				new_row[j-1] = new_row[j]
 				new_row[j] = 0
 	return new_row
+
+### MOVE FUNCTIONS ###
 def left(grid):
 	new_grid = grid.copy()
 	for x in range(4):
@@ -72,7 +88,7 @@ def left(grid):
 				new_row[i] = new_row[i] + new_row[i+1]
 				new_row[i+1] = 0
 				
-			if i >0 and new_row[i-1] == 0:
+			if i > 0 and new_row[i-1] == 0:
 				new_row[i-1] = new_row[i]
 				new_row[i] = 0
 			new_row = flatten(new_row)
@@ -90,7 +106,7 @@ def right(grid):
 				new_row[i] = new_row[i] + new_row[i+1]
 				new_row[i+1] = 0
 				
-			if i >0 and new_row[i-1] == 0:
+			if i > 0 and new_row[i-1] == 0:
 				new_row[i-1] = new_row[i]
 				new_row[i] = 0
 			new_row = flatten(new_row)
@@ -108,7 +124,7 @@ def up(grid):
 				new_row[i] = new_row[i] + new_row[i+1]
 				new_row[i+1] = 0
 				
-			if i >0 and new_row[i-1] == 0:
+			if i > 0 and new_row[i-1] == 0:
 				new_row[i-1] = new_row[i]
 				new_row[i] = 0
 			new_row = flatten(new_row)
@@ -129,7 +145,7 @@ def down(grid):
 				new_row[i] = new_row[i] + new_row[i+1]
 				new_row[i+1] = 0
 				
-			if i >0 and new_row[i-1] == 0:
+			if i > 0 and new_row[i-1] == 0:
 				new_row[i-1] = new_row[i]
 				new_row[i] = 0
 			new_row = flatten(new_row)
@@ -143,86 +159,56 @@ def print_grid(grid):
 	for row in grid:
 		print(row)
 
-def on_press(key):
-	global grid
+def on_press(key, move_no, grid):
 	
 	# key_map = {'w':'up','a':'left','s':'down', 'd':'right'}
 	if key == ('w'):
 		ug = up(grid)
 		empty_list = find_empty(ug)
-		state, score = check_game_state(ug,empty_list)
-		if state and grid != ug: grid = spawn(ug, empty_list)
-		return grid, state, score
+		state, score = check_game_state(ug)
+		if state and grid != ug: grid = spawn(ug, empty_list); move_no += 1
+		return grid, state, score, move_no
 	elif key == ('s'):
 		dg = down(grid)
 		empty_list = find_empty(dg)
-		state, score = check_game_state(dg,empty_list)
-		if state and grid != dg: grid = spawn(dg, empty_list)
-		return grid, state, score
+		state, score = check_game_state(dg)
+		if state and grid != dg: grid = spawn(dg, empty_list); move_no += 1
+		return grid, state, score, move_no
 	elif key == ('a'):
 		lg = left(grid)
 		empty_list = find_empty(lg)
-		state, score = check_game_state(lg,empty_list)
-		if state and grid != lg: grid = spawn(lg, empty_list)
-		return grid, state, score
+		state, score = check_game_state(lg)
+		if state and grid != lg: grid = spawn(lg, empty_list); move_no += 1
+		return grid, state, score, move_no
 	elif key == ('d'):
 		rg = right(grid)
 		empty_list = find_empty(rg)
-		state, score = check_game_state(rg,empty_list)
-		if state and grid != rg: grid = spawn(rg, empty_list)
-		return grid, state, score
+		state, score = check_game_state(rg)
+		if state and grid != rg: grid = spawn(rg, empty_list); move_no += 1
+		return grid, state, score, move_no
 	
 def format_grid(grid):
+	'''format grid for html'''
+
 	return [[' ' if x==0 else x for x in y] for y in grid]
 
 CELL_COLOR_DICT = { 2:"#776e65", 4:"#776e65", 8:"#f9f6f2", 16:"#f9f6f2", \
                     32:"#f9f6f2", 64:"#f9f6f2", 128:"#f9f6f2", 256:"#f9f6f2", \
                     512:"#f9f6f2", 1024:"#f9f6f2", 2048:"#f9f6f2" }
 		
-app = Flask(__name__)
 
-@app.route('/', methods=['GET', 'POST'])
-def main():
-	global grid
-	grid = make_grid()
-	_, score = check_game_state(grid, find_empty(grid))
-	return render_template('home.html', grid = format_grid(grid), score=score, state =True)
 	
-@app.route('/gameup', methods=['GET', 'POST'])
-def gameup():
-	global grid
-	grid, state, score = on_press('w')
-	return render_template('home.html', grid = format_grid(grid), score=score, state=state)
+# def fill_inverse(grid):
+# 	empty_list = find_empty(grid)
+# 	for i, (x,y) in enumerate(empty_list):
+# 		grid[x][y] = -i -1
+# 	return grid
 	
-@app.route('/gamedown', methods=['GET', 'POST'])
-def gamedown():
-	global grid
-	grid, state, score = on_press('s')
-	return render_template('home.html', grid = format_grid(grid), score=score, state=state)
-	
-@app.route('/gameleft', methods=['GET', 'POST'])
-def gameleft():
-	global grid
-	grid, state, score = on_press('a')
-	return render_template('home.html', grid = format_grid(grid), score=score, state=state)
-	
-@app.route('/gameright', methods=['GET', 'POST'])
-def gameright():
-	global grid
-	grid, state, score = on_press('d')
-	return render_template('home.html', grid = format_grid(grid), score=score, state=state)
-	
-def fill_inverse(grid):
-	empty_list = find_empty(grid)
-	for i, (x,y) in enumerate(empty_list):
-		grid[x][y] = -i -1
-	return grid
-	
-def unfill_inverse(grid):
-	return [[0 if x<0 else x for x in y] for y in grid]
+# def unfill_inverse(grid):
+# 	return [[0 if x<0 else x for x in y] for y in grid]
 	
 	
-	
+### Bot logic ###
 def calc_move(grid, depth=4, eval = 0, isspawn=False):
 	if depth==0:
 		empty_list = find_empty(grid)
@@ -330,9 +316,9 @@ def free_squares(grid):
 eval_dict = {2**x:x for x in range(15)}
 def mono_v2(grid):
 	weights = [[10,8,7,6.8],
- [.5,.7,1,3],
- [-.5,-1.5,-1.8,-2],
- [-3.8,-3.7,-3.5,-3]]
+				[.5,.7,1,3],
+				[-.5,-1.5,-1.8,-2],
+				[-3.8,-3.7,-3.5,-3]]
 	# weights = [[20,16,13,10.5], #8
 	# [.5,.7,1,1.3], #1, 4
 	# [-.5,-1.5,-1.8,-2],
@@ -402,6 +388,7 @@ def calc_mono(grid):
 	return totalscore
 	
 def expectimax(grid, depth=4, spawn=False):
+	'''Returns the best move and the corresponding score'''
 	if depth == 0:
 		return 'a', eval_v1(grid, get_curr_score(grid))
 	if not spawn:
@@ -447,51 +434,22 @@ def expectimax(grid, depth=4, spawn=False):
 		
 	else:
 		empty_list = find_empty(grid)
+		empty_list_len = len(empty_list)
 		min_eval = 0
 		for i in [2, 4]:
 			for (x,y) in empty_list:
 				new_grid = deepcopy(grid)
 				new_grid[x][y] = i
 				_, eval = expectimax(new_grid, depth-1, False)
+				
+				# For minimax: min_eval = min(min_eval, eval)
 				if i==2:
-				# min_eval = min(min_eval, eval)
-					min_eval += eval * (1/(len(empty_list))*0.9)
+					min_eval += eval * ((1/empty_list_len)*0.9)
 				else:
-					min_eval += eval * (1/(len(empty_list))*0.1)
+					min_eval += eval * ((1/empty_list_len)*0.1)
 				
 		return '',min_eval
 
 
-def monte_calc(grid):
-	iter = 10
-	move_list = [left, right, up, down]
-	for _ in range(iter):
-		loss=False
-		while not loss:
-			new_grid = choice(move_list)(grid)
-			empty_new_grid = find_empty(new_grid)
-			is_continue, score = check_game_state(new_grid, empty_new_grid)
-			if not is_continue:
-				loss = True
-				return move, score
-			else:
-				return monte_calc(new_grid)
-				
-			
-@app.route('/bot', methods=['GET', 'POST'])
-def bot():
-	global grid
-	if len(find_empty(grid)) <5:
-		depth = 6
-	else:
-		depth = 4
-	move, eval = expectimax(grid, depth)
-	grid, state, score = on_press(move)
-	return render_template('home.html', grid = format_grid(grid), score=score, state=state, debug=True, total=eval)
-		
-	
-	
 
-if __name__ == '__main__':
-	app.run(debug=True)
 
