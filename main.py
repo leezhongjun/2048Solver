@@ -29,8 +29,7 @@ def gameup():
 	global grid, move_no, score
 	try:
 		new_grid = up(grid)
-	except Exception as e:
-		print(e)
+	except:
 		return redirect(url_for('main'))
 	
 	score += score_vert(grid)
@@ -100,11 +99,11 @@ def bot():
 		grid
 	except:
 		return redirect(url_for('main'))
+	
 	move = find_best_move(grid)
 	if move == -1:
 		print('ended')
 		move = random.randint(0,3)
-	# print(move)
 	new_grid = move_ls[move](grid)
 	score += score_ls[move](grid)
 	if new_grid != grid:
