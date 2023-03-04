@@ -283,7 +283,6 @@ def format_grid(grid):
 ### AI PORTION ###
 
 ### AI CONSTANTS ###
-CPROB_THRESH_BASE = 0.0001
 CUR_DEPTH_MIN = 3
 CUR_DEPTH_MAX = 15
 CACHE_DEPTH_LIMIT  = 15
@@ -318,7 +317,8 @@ def score_grid(grid):
 
 def score_tilechoose_node(trans_table, curdepth, depth_limit, grid, cprob):
     ''' Score the tile choose node '''
-    if cprob < CPROB_THRESH_BASE or curdepth >= depth_limit:
+    minprob = 1 / (1 << (2 * curdepth + 4))
+    if cprob < minprob or curdepth >= depth_limit:
         if grid in trans_table:
             if trans_table[grid][0] >= curdepth: # 0 is depth
                 return trans_table[grid][1] # 1 is heuristic score
@@ -338,7 +338,7 @@ def score_tilechoose_node(trans_table, curdepth, depth_limit, grid, cprob):
         if (tmp & 0xf) == 0:
             res += score_move_node(trans_table, curdepth, depth_limit, grid | tile, cprob * 0.9) * 0.9
             res += score_move_node(trans_table, curdepth, depth_limit, grid | (tile << 1), cprob * 0.1) * 0.1
-        
+
         tmp >>= 4
         tile <<= 4
     
@@ -401,12 +401,7 @@ def find_best_move(grid):
     depth_limit = min(DEPTH_MAX, max(DEPTH_MIN, count_distinct_tiles(grid) - DEPTH_DISCOUNT))
     if MULTITHREAD:
         with ThreadPoolExecutor(max_workers=4) as executor:
-
             scores = list(executor.map(score_toplevel_move, ((grid, move, trans_table, depth_limit) for move in range(4))))
-
-        # pool = ThreadPool(4)
-        # scores = pool.map(score_toplevel_move, [(grid, move, trans_table, depth_limit) for move in range(4)])
-        # pool.close()
     else:
         ls = ((grid, move, trans_table, depth_limit) for move in range(4))
         scores = map(score_toplevel_move, ls)
@@ -420,10 +415,6 @@ def n_find_best_move(grid):
     depth_limit = 1
     with ThreadPoolExecutor(max_workers=4) as executor:
         scores = list(executor.map(score_toplevel_move, ((grid, move, trans_table, depth_limit) for move in range(4))))
-
-    # pool = ThreadPool(4)
-    # scores = pool.starmap(score_toplevel_move, [(grid, move, trans_table, depth_limit) for move in range(4)])
-    # pool.close()
     bestmove, bestscore = max(enumerate(scores), key=lambda x:x[1])
     if bestscore == 0:
         return -1

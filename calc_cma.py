@@ -10,12 +10,13 @@ SCORE_SUM_WEIGHT = 11
 SCORE_MERGES_WEIGHT = 700
 SCORE_EMPTY_WEIGHT = 270
 SCORE_LOST_PENALTY = 200000
-w = [SCORE_MONOTONICITY_POWER, SCORE_MONOTONICITY_WEIGHT, SCORE_SUM_POWER, SCORE_SUM_WEIGHT, SCORE_MERGES_WEIGHT, SCORE_EMPTY_WEIGHT]
+# SCORE_LOST_PENALTY = 0
+w = [SCORE_MONOTONICITY_WEIGHT, SCORE_SUM_WEIGHT, SCORE_MERGES_WEIGHT, SCORE_EMPTY_WEIGHT]
 move_ls = [game.left, game.right, game.up, game.down]
 score_ls = [game.score_hori, game.score_hori, game.score_vert, game.score_vert]
 
 def calc_dict(weights):
-    SCORE_MONOTONICITY_POWER, SCORE_MONOTONICITY_WEIGHT, SCORE_SUM_POWER, SCORE_SUM_WEIGHT, SCORE_MERGES_WEIGHT, SCORE_EMPTY_WEIGHT = list(map(lambda a,b:a*b, w, weights))
+    SCORE_MONOTONICITY_WEIGHT, SCORE_SUM_WEIGHT, SCORE_MERGES_WEIGHT, SCORE_EMPTY_WEIGHT = list(map(lambda a,b:a*b, w, weights))
     score_d = [0]* 65536
     for x in range(65536):
         nums = [x & 0xf, (x >> 4) & 0xf, (x >> 8) & 0xf, (x >> 12) & 0xf]
@@ -75,20 +76,20 @@ def score_model(weights):
 
 # Define the fitness function to be maximized
 def fitness_function(weights):
-    iterations = 8
+    iterations = 50
     scores = 0
     for x in range(iterations):
-        start = timer()
+        # start = timer()
         scores += score_model(weights)
-        end = timer()
-        print(end - start)
+        # end = timer()
+        # print(end - start)
 
     return scores/iterations
 
 
 # Initialize the CMA-ES algorithm
 num_features = len(w)
-es = cma.CMAEvolutionStrategy(num_features*[1], 0.5)
+es = cma.CMAEvolutionStrategy(num_features*[1], 0.1)
 
 # Evaluate the initial weights
 best_score = fitness_function(num_features*[1])  # Evaluate fitness
@@ -97,10 +98,13 @@ print("Avg score:", best_score)
 
 # Run the optimization
 for i in range(50):  # Number of iterations
-    solutions = es.ask(number=8)  # Generate candidate solutions
+    solutions = es.ask()  # Generate candidate solutions
     fitness_values = []
+    print(solutions)
     for i in range(8):
-        fitness_values.append(fitness_function(solutions[i]))
+        res  = fitness_function(solutions[i])
+        fitness_values.append(res)
+    print(fitness_values[-1])
     es.tell(solutions, fitness_values)  # Update the covariance matrix
 
 # Get the best solution and evaluate it
@@ -111,10 +115,11 @@ print("Avg score:", best_score)
 
 # Run the optimization
 for i in range(50):  # Number of iterations
-    solutions = es.ask(number=4)  # Generate candidate solutions
+    solutions = es.ask(number=8)  # Generate candidate solutions
     fitness_values = []
     for i in range(8):
-        fitness_values.append(fitness_function(solutions[i]))
+        res  = fitness_function(solutions[i])
+        fitness_values.append(res)
     es.tell(solutions, fitness_values)  # Update the covariance matrix
 
 # Get the best solution and evaluate it

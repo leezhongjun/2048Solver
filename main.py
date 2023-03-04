@@ -24,8 +24,6 @@ def main():
 
 @app.route('/gameup', methods=['GET', 'POST'])
 def gameup():
-	if request.method == 'GET':
-		return redirect(url_for('main'))
 	global grid, move_no, score
 	try:
 		new_grid = up(grid)
@@ -41,8 +39,6 @@ def gameup():
 
 @app.route('/gamedown', methods=['GET', 'POST'])
 def gamedown():
-	if request.method == 'GET':
-		return redirect(url_for('main'))
 	global grid, move_no, score
 	try:
 		new_grid = down(grid)
@@ -58,8 +54,6 @@ def gamedown():
 
 @app.route('/gameleft', methods=['GET', 'POST'])
 def gameleft():
-	if request.method == 'GET':
-		return redirect(url_for('main'))
 	global grid, move_no, score
 	try:
 		new_grid = left(grid)
@@ -75,8 +69,6 @@ def gameleft():
 
 @app.route('/gameright', methods=['GET', 'POST'])
 def gameright():
-	if request.method == 'GET':
-		return redirect(url_for('main'))
 	global grid, move_no, score
 	try:
 		new_grid = right(grid)
@@ -92,8 +84,6 @@ def gameright():
 
 @app.route('/bot', methods=['GET', 'POST'])
 def bot():
-	if request.method == 'GET':
-		return redirect(url_for('main'))
 	global grid, move_no, score
 	try:
 		move = find_best_move(grid)

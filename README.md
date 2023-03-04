@@ -1,6 +1,8 @@
 # 2048Solver
 [2048](https://play2048.co/) webapp and AI solver in Python
 
+It achieves the 2048 tile 100% of the time
+
 ## Demo (not sped up)
 ![2048-demo](https://user-images.githubusercontent.com/80515759/222767967-dd664566-7852-4cd4-bebb-efd7890492e4.gif)
 
@@ -15,6 +17,8 @@
  - [Bitboard](https://en.wikipedia.org/wiki/Bitboard) representation for grid
  - [Transposition table](http://en.wikipedia.org/wiki/Transposition_table) to speed up search
  - [Multithreading](https://en.wikipedia.org/wiki/Multithreading_(computer_architecture))
+ - Prune nodes below a dynamic probability threshold
+ - Dynamic depth for search
 
  ## Potential improvements
  - [N-tuple network](https://en.wikipedia.org/wiki/RAMnets) trained with [reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning) for evaluation function
