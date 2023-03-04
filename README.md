@@ -29,6 +29,7 @@
 
 ### Dependencies
  - flask
+ - [cma](https://pypi.org/project/cma/)
 
 ### How to use:
 1. Run `main.py`

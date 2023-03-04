@@ -96,21 +96,19 @@ def bot():
 		return redirect(url_for('main'))
 	global grid, move_no, score
 	try:
-		grid
+		move = find_best_move(grid)
 	except:
 		return redirect(url_for('main'))
 	
-	move = find_best_move(grid)
 	if move == -1:
-		print('ended')
-		move = random.randint(0,3)
-	new_grid = move_ls[move](grid)
-	score += score_ls[move](grid)
-	if new_grid != grid:
-		grid = add_random(new_grid)
-		move_no += 1
-	state = check_survive(grid)
-
+		state=False
+	else:
+		new_grid = move_ls[move](grid)
+		score += score_ls[move](grid)
+		if new_grid != grid:
+			grid = add_random(new_grid)
+			move_no += 1
+		state = True
 	# additional debug info: eval_score, depth
 	return render_template('home.html', grid = format_grid(grid), score=score, state=state, debug=DEBUG, moves=move_no)
 		
