@@ -14,6 +14,7 @@
  - Heuristic weights calculated with [CMA-ES](https://en.wikipedia.org/wiki/CMA-ES)
  - [Bitboard](https://en.wikipedia.org/wiki/Bitboard) representation for grid
  - [Transposition table](http://en.wikipedia.org/wiki/Transposition_table) to speed up search
+ - [Multithreading](https://en.wikipedia.org/wiki/Multithreading_(computer_architecture))
 
  ## Potential improvements
  - [N-tuple network](https://en.wikipedia.org/wiki/RAMnets) trained with [reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning) for evaluation function

@@ -4,6 +4,7 @@
 # i.e. 2 to the power of bits
 
 import random, collections
+from multiprocessing.pool import ThreadPool
 
 ROW_MASK = 0xFFFF
 COL_MASK = 0x000F_000F_000F_000F
@@ -15,7 +16,6 @@ SCORE_SUM_WEIGHT = 11
 SCORE_MERGES_WEIGHT = 700
 SCORE_EMPTY_WEIGHT = 270
 SCORE_LOST_PENALTY = 200000
-
 
 ### HELPER FUNCTIONS ###
 def transpose(x):
@@ -52,8 +52,6 @@ def flatten(bitrow):
         if bitrow == pastrow:
             x += 1
         pastrow = bitrow
-
-        # print(bin(bitrow))
     return bitrow
 
 
@@ -297,6 +295,8 @@ DEPTH_ARR = [DEPTH_MIN, DEPTH_MIN, DEPTH_MIN, DEPTH_MIN, DEPTH_MIN, DEPTH_MIN, D
                 DEPTH_MIN+2, \
                 DEPTH_MIN+2][::-1]
 
+MULTITHREAD = True
+
 trans_table = collections.defaultdict()
 move_ls = [left, right, up, down]
 
@@ -371,40 +371,45 @@ def score_move_node(trans_table, curdepth, depth_limit, grid, cprob):
         if ev > best:
             best = ev
     
-    curdepth-=1
+    curdepth -= 1
     return best
+
+def score_toplevel_move(grid, move, trans_table, depth_limit):
+    ''' Score the top level move '''
+    if move == 0:
+        lg = left(grid)
+        if grid == lg:
+            return 0
+        return score_tilechoose_node(trans_table, 0, depth_limit, lg, 1)
+    elif move == 1:
+        rg = right(grid)
+        if grid == rg:
+            return 0
+        return score_tilechoose_node(trans_table, 0, depth_limit, rg, 1)
+    elif move == 2:
+        ug = up(grid)
+        if grid == ug:
+            return 0
+        return score_tilechoose_node(trans_table, 0, depth_limit, ug, 1)
+    elif move == 3:
+        dg = down(grid)
+        if grid == dg:
+            return 0
+        return score_tilechoose_node(trans_table, 0, depth_limit, dg, 1)
+    return 0
 
 def find_best_move(grid):
     ''' Find the best move '''
     empty_count = count_empty(grid)
     depth_limit = DEPTH_ARR[empty_count]
-    lg = left(grid)
-    rg = right(grid)
-    ug = up(grid)
-    dg = down(grid)
-    ev = 0
-    best = 0
-    move = -1
+    if MULTITHREAD:
+        pool = ThreadPool(4)
+        scores = pool.starmap(score_toplevel_move, [(grid, move, trans_table, depth_limit) for move in range(4)])
+    else:
+        ls = zip(*((grid, move, trans_table, depth_limit) for move in range(4)))
+        scores = map(score_toplevel_move, *ls)
+    bestmove, bestscore = max(enumerate(scores), key=lambda x:x[1])
+    if bestscore == 0:
+        return -1
+    return bestmove
 
-    if grid != lg:
-        ev = score_tilechoose_node(trans_table, 0, depth_limit, lg, 1)
-        if ev > best:
-            best = ev
-            move = 0
-    if grid != rg:
-        ev = score_tilechoose_node(trans_table, 0, depth_limit, rg, 1)
-        if ev > best:
-            best = ev
-            move = 1
-    if grid != ug:
-        ev = score_tilechoose_node(trans_table, 0, depth_limit, ug, 1)
-        if ev > best:
-            best = ev
-            move = 2
-    if grid != dg:
-        ev = score_tilechoose_node(trans_table, 0, depth_limit, dg, 1)
-        if ev > best:
-            best = ev
-            move = 3
-     
-    return move
