@@ -76,7 +76,7 @@ def score_model(weights):
 
 # Define the fitness function to be maximized
 def fitness_function(weights):
-    iterations = 50
+    iterations = 20
     scores = 0
     for x in range(iterations):
         # start = timer()
