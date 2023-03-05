@@ -25,12 +25,12 @@ It achieves the 2048 tile 100% of the time
  - Port to a [compiled language](https://en.wikipedia.org/wiki/Compiled_language) for faster performance
  - [Deep neural network](https://doi.org/10.1007/978-3-030-65883-0_5) according to [recent research](https://doi.org/10.2197/ipsjjip.29.336)
 
- ### How to use:
-1. Run `main.py`
-
 ### Dependencies
  - flask
  - [cma](https://pypi.org/project/cma/)
+
+ ### How to use:
+1. Run `main.py`
 
 ### References
  - This [StackOverflow answer](https://stackoverflow.com/a/22498940/1204143) for *What is the optimal algorithm for the game 2048?*
