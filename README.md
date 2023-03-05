@@ -25,16 +25,20 @@ It achieves the 2048 tile 100% of the time
  - Port to a [compiled language](https://en.wikipedia.org/wiki/Compiled_language) for faster performance
  - [Deep neural network](https://doi.org/10.1007/978-3-030-65883-0_5) according to [recent research](https://doi.org/10.2197/ipsjjip.29.336)
 
+ ### How to use:
+1. Run `main.py`
+
+### Dependencies
+ - flask
+ - [cma](https://pypi.org/project/cma/)
+
 ### References
  - This [StackOverflow answer](https://stackoverflow.com/a/22498940/1204143) for *What is the optimal algorithm for the game 2048?*
  - [nneonneo/2048-ai](https://github.com/nneonneo/2048-ai) 
  - [ziap/2048-tdl](https://github.com/ziap/2048-tdl)
  - W. Jaśkowski, "Mastering 2048 With Delayed Temporal Coherence Learning, Multistage Weight Promotion, Redundant Encoding, and Carousel Shaping," in IEEE Transactions on Games, vol. 10, no. 1, pp. 3-14, March 2018, doi: 10.1109/TCIAIG.2017.2651887.
 
-### Dependencies
- - flask
- - [cma](https://pypi.org/project/cma/)
 
-### How to use:
-1. Run `main.py`
+
+
 
