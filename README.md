@@ -25,7 +25,7 @@ It achieves the 2048 tile 100% of the time
  - Port to a [compiled language](https://en.wikipedia.org/wiki/Compiled_language) for faster performance
  - [Deep neural network](https://doi.org/10.1007/978-3-030-65883-0_5) according to [recent research](https://doi.org/10.2197/ipsjjip.29.336)
 
-### Acknowlegements
+### References
  - This [StackOverflow answer](https://stackoverflow.com/a/22498940/1204143) for *What is the optimal algorithm for the game 2048?*
  - [nneonneo/2048-ai](https://github.com/nneonneo/2048-ai) 
  - [ziap/2048-tdl](https://github.com/ziap/2048-tdl)
