@@ -1,10 +1,16 @@
 # 2048Solver
 [2048](https://play2048.co/) webapp and AI solver in Python
 
-It achieves the 2048 tile 100% of the time
 
 ## Demo (not sped up)
 ![2048-demo](https://user-images.githubusercontent.com/80515759/222767967-dd664566-7852-4cd4-bebb-efd7890492e4.gif)
+
+## Results
+For 100 runs:
+ - Achieves the 2048 tile 100% of the time
+ - Mean score   : 100625.68
+ - Median score : 74404 
+ - Max score    : 290532 
 
 ## Features
  - [Expectimax](https://en.wikipedia.org/wiki/Expectiminimax), an adversarial search for non-deterministic games
@@ -28,6 +34,7 @@ It achieves the 2048 tile 100% of the time
 ### Dependencies
  - flask
  - [cma](https://pypi.org/project/cma/)
+ - tqdm (for benchmarks)
 
  ### How to use:
 1. Run `main.py`

@@ -412,7 +412,7 @@ def find_best_move(grid):
 
 def n_find_best_move(grid):
     ''' Find the best move (for cma) '''
-    depth_limit = 2
+    depth_limit = 3
     with ThreadPoolExecutor(max_workers=4) as executor:
         scores = list(executor.map(score_toplevel_move, ((grid, move, trans_table, depth_limit) for move in range(4))))
     bestmove, bestscore = max(enumerate(scores), key=lambda x:x[1])
