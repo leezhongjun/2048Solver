@@ -8,9 +8,12 @@
 ## Results
 For 100 runs:
  - Achieves the 2048 tile 100% of the time
- - Mean score   : 100625.68
- - Median score : 74404 
- - Max score    : 290532 
+ 
+| Result | Score |
+| --- | --- |
+| Mean | 100,626 |
+| Median| 74,404 |
+| Max | 290,532 |
 
 ## Features
  - [Expectimax](https://en.wikipedia.org/wiki/Expectiminimax), an adversarial search for non-deterministic games
