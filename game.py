@@ -4,7 +4,6 @@
 # i.e. 2 to the power of bits
 
 import random, collections
-from multiprocessing.pool import ThreadPool, Pool
 from concurrent.futures import ThreadPoolExecutor
 
 ROW_MASK = 0xFFFF
@@ -17,6 +16,13 @@ SCORE_SUM_WEIGHT = 11
 SCORE_MERGES_WEIGHT = 700
 SCORE_EMPTY_WEIGHT = 270
 SCORE_LOST_PENALTY = 200000
+
+
+w = [SCORE_MONOTONICITY_WEIGHT, SCORE_SUM_WEIGHT, SCORE_MERGES_WEIGHT, SCORE_EMPTY_WEIGHT]
+
+# Weights from calc_cma.py
+weights = [0.98786212, 1.04484233, 1.03834599, 1.09304891]
+SCORE_MONOTONICITY_WEIGHT, SCORE_SUM_WEIGHT, SCORE_MERGES_WEIGHT, SCORE_EMPTY_WEIGHT = list(map(lambda a,b:a*b, w, weights))
 
 ### HELPER FUNCTIONS ###
 def transpose(x):
@@ -412,7 +418,7 @@ def find_best_move(grid):
 
 def n_find_best_move(grid):
     ''' Find the best move (for cma) '''
-    depth_limit = 3
+    depth_limit = 2
     with ThreadPoolExecutor(max_workers=4) as executor:
         scores = list(executor.map(score_toplevel_move, ((grid, move, trans_table, depth_limit) for move in range(4))))
     bestmove, bestscore = max(enumerate(scores), key=lambda x:x[1])

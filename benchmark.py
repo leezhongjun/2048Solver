@@ -26,6 +26,8 @@ scores = []
 for x in tqdm(range(iterations)):
     scores.append(score_model())
 
+scores.sort()
+
 print(scores)
 print('Mean:')
 print(sum(scores) / len(scores))

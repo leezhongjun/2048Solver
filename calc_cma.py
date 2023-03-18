@@ -1,7 +1,8 @@
 import cma
 import game
 from timeit import default_timer as timer
-from multiprocessing.pool import ThreadPool
+from tqdm import tqdm
+import numpy as np
 
 SCORE_MONOTONICITY_POWER = 4
 SCORE_MONOTONICITY_WEIGHT = 47
@@ -10,7 +11,7 @@ SCORE_SUM_WEIGHT = 11
 SCORE_MERGES_WEIGHT = 700
 SCORE_EMPTY_WEIGHT = 270
 SCORE_LOST_PENALTY = 200000
-# SCORE_LOST_PENALTY = 0
+
 w = [SCORE_MONOTONICITY_WEIGHT, SCORE_SUM_WEIGHT, SCORE_MERGES_WEIGHT, SCORE_EMPTY_WEIGHT]
 move_ls = [game.left, game.right, game.up, game.down]
 score_ls = [game.score_hori, game.score_hori, game.score_vert, game.score_vert]
@@ -76,20 +77,19 @@ def score_model(weights):
 
 # Define the fitness function to be maximized
 def fitness_function(weights):
-    iterations = 20
-    scores = 0
+    iterations = 15
+    scores = []
     for x in range(iterations):
         # start = timer()
-        scores += score_model(weights)
+        scores.append(score_model(weights))
         # end = timer()
         # print(end - start)
-
-    return scores/iterations
-
+    scores.sort()
+    return scores[iterations // 2]
 
 # Initialize the CMA-ES algorithm
 num_features = len(w)
-es = cma.CMAEvolutionStrategy(num_features*[1], 0.1)
+es = cma.CMAEvolutionStrategy(np.array([0.97800426, 0.95300974, 1.03633285, 1.08913887]), 0.05)
 
 # Evaluate the initial weights
 best_score = fitness_function(num_features*[1])  # Evaluate fitness
@@ -97,14 +97,14 @@ print("Initial weights:", w)
 print("Avg score:", best_score)
 
 # Run the optimization
-for i in range(50):  # Number of iterations
-    solutions = es.ask()  # Generate candidate solutions
+for i in tqdm(range(20)):  # Number of iterations
+    solutions = es.ask(number=8)  # Generate candidate solutions
     fitness_values = []
-    print(solutions)
-    for i in range(8):
+    # print(solutions)
+    for i in tqdm(range(8)):
         res  = fitness_function(solutions[i])
         fitness_values.append(res)
-    print(fitness_values[-1])
+    # print(fitness_values)
     es.tell(solutions, fitness_values)  # Update the covariance matrix
 
 # Get the best solution and evaluate it
@@ -113,8 +113,11 @@ best_score = fitness_function(best_weights)  # Evaluate fitness
 print("Best weights:", best_weights)
 print("Avg score:", best_score)
 
+
+# Optionally, do it again with the best weights
+
 # Run the optimization
-for i in range(50):  # Number of iterations
+for i in tqdm(range(20)):  # Number of iterations
     solutions = es.ask(number=8)  # Generate candidate solutions
     fitness_values = []
     for i in range(8):

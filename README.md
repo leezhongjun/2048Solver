@@ -7,13 +7,13 @@
 
 ## Results
 For 100 runs:
- - Achieves the 2048 tile 100% of the time
- 
+ - Achieves the 2048 tile **100%** of the time
+
 | Result | Score |
 | --- | --- |
-| Mean | 100,626 |
-| Median| 74,404 |
-| Max | 290,532 |
+| Mean | 105,369 |
+| Median | 99,000 |
+| Max | 289,920 |
 
 ## Features
  - [Expectimax](https://en.wikipedia.org/wiki/Expectiminimax), an adversarial search for non-deterministic games
@@ -40,7 +40,9 @@ For 100 runs:
  - tqdm (for benchmarks)
 
  ### How to use:
-1. Run `main.py`
+ - Run `main.py` to run flask webapp
+ - Run `calc_cma.py` to calculate heuristic weights based on CMA-ES
+ - Run `benchmark.py` for benchmarking
 
 ### References
  - This [StackOverflow answer](https://stackoverflow.com/a/22498940/1204143) for *What is the optimal algorithm for the game 2048?*
